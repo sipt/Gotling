@@ -1,6 +1,9 @@
 package common
 
-import "sync"
+import (
+	"net"
+	"sync"
+)
 
 const (
 	//TCPProtocal tcp 协议常量
@@ -16,7 +19,7 @@ type User struct {
 	Password string //用户密码
 	Nick     string //用户昵称
 
-	*NetInfo //用户网络来源信息
+	Addr net.Addr
 }
 
 //IAddr 地址

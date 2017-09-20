@@ -18,38 +18,43 @@ type NetEntity struct {
 	Addr    net.Addr
 	Data    []byte
 	ErrChan chan error
+	Err     error
 }
 
 //NewNetEntity 初始化一个netEntity
 func NewNetEntity(addr net.Addr, data []byte, err error) *NetEntity {
-	if err != nil {
-		return &NetEntity{
-			ErrChan: make(chan error, 1),
-		}
-	}
 	return &NetEntity{
 		Addr: addr,
 		Data: data,
+		Err:  err,
 	}
 }
 
 //IConn 连接
 type IConn interface {
 	//初始化网络
-	InitConn(port int) (<-chan *NetEntity, chan<- *NetEntity, error)
+	InitConn() (<-chan *NetEntity, chan<- *NetEntity, error)
 	Close()
+}
+
+//NewUDPConn 初始化
+func NewUDPConn(port int) IConn {
+	return &UDPConn{
+		port: port,
+	}
 }
 
 //UDPConn udp连接
 type UDPConn struct {
 	conn *net.UDPConn
+	port int
 }
 
 //InitConn 监听端口
-func (c *UDPConn) InitConn(port int) (<-chan *NetEntity, chan<- *NetEntity, error) {
+func (c *UDPConn) InitConn() (<-chan *NetEntity, chan<- *NetEntity, error) {
 	conn, err := net.ListenUDP(common.UDPProtocal, &net.UDPAddr{
 		IP:   net.IPv4zero,
-		Port: port,
+		Port: c.port,
 	})
 	if err != nil {
 		return nil, nil, err
