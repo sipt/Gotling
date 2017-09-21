@@ -16,6 +16,7 @@ const ()
 
 func main() {
 	var port = flag.Int("port", 20010, "udp listen port")
+	flag.Parse()
 	encoder := encoding.NewJSONEncoder()
 	conn := network.NewUDPConn(*port)
 	transporter := transport.NewTransporter(conn, encoder, nil)

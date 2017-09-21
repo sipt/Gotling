@@ -25,18 +25,23 @@ func main() {
 	building := room.NewBuilding()
 	executor := exec.NewExecutor(exec.ClientMode, transporter, building)
 	result := executor.LoopExec()
-	go func() {
-		for {
-			msg := <-result
-			fmt.Printf("[%d]:%s\n", msg.UserID, string(msg.Data))
-		}
-	}()
 	var commond string
 	var id int64
 	var user = &common.User{
 		ID: utils.UniqueID(),
 	}
 	var roomID int64 = -1
+	go func() {
+		for {
+			msg := <-result
+			fmt.Printf("\n[%d]:%s", msg.UserID, string(msg.Data))
+			if roomID < 0 {
+				fmt.Print("\n➜ ")
+			} else {
+				fmt.Printf("\n[%d]➜ ", roomID)
+			}
+		}
+	}()
 	fmt.Printf("Gotaling [%d]:\n请输入昵称：\n➜ ", user.ID)
 	fmt.Scanf("%s", &user.Nick)
 	for {
@@ -46,6 +51,21 @@ func main() {
 			fmt.Printf("\n[%d]➜ ", roomID)
 		}
 		fmt.Scanf("%s %d", &commond, &id)
+		fmt.Println(commond)
+		if commond == "" {
+			if roomID >= 0 {
+				msg := &common.Message{
+					RoomID: roomID,
+					UserID: user.ID,
+					Type:   common.MsgTypeNil,
+				}
+				err := executor.ToServer(msg)
+				if err != nil {
+					fmt.Println("err:", err)
+				}
+			}
+			continue
+		}
 		switch commond {
 		case "into":
 			msg := &common.Message{
@@ -83,5 +103,6 @@ func main() {
 				fmt.Println("err:", err)
 			}
 		}
+		commond = ""
 	}
 }
