@@ -12,8 +12,8 @@ func TestUDPConn(t *testing.T) {
 	count := 10
 	ip := "127.0.0.1" //"120.26.51.19"
 	port := 20010
-	var conn IConn = new(UDPConn)
-	receiver, sender, err := conn.InitConn(port)
+	var conn IConn = &UDPConn{port: port}
+	receiver, sender, err := conn.InitConn()
 	if err != nil {
 		t.Errorf("listen port %d failed, err: %v", port, err)
 	}
@@ -23,11 +23,8 @@ func TestUDPConn(t *testing.T) {
 		var bytes []byte
 		for index := 0; index < count; index++ {
 			entity := <-receiver
-			if entity.ErrChan != nil {
-				err := <-entity.ErrChan
-				if err != nil {
-					t.Errorf("receive data failed, err:%v", err)
-				}
+			if entity.Err != nil {
+				t.Errorf("receive data failed, err:%v", err)
 			}
 			bytes = entity.Data
 			if string(bytes) != data {
