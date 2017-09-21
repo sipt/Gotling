@@ -37,7 +37,7 @@ func main() {
 		ID: utils.UniqueID(),
 	}
 	var roomID int64 = -1
-	fmt.Print("Gotaling:\n请输入昵称：\n➜ ")
+	fmt.Printf("Gotaling [%d]:\n请输入昵称：\n➜ ", user.ID)
 	fmt.Scanf("%s", &user.Nick)
 	for {
 		if roomID < 0 {
