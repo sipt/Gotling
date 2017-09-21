@@ -26,7 +26,7 @@ type Room struct {
 
 //NewRoom 创建一个房间
 func NewRoom(user *User) *Room {
-	users := new(UserList)
+	users := NewUserList()
 	// users.Add(user)
 	return &Room{
 		ID:    utils.UniqueID(),

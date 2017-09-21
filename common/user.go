@@ -88,12 +88,19 @@ func (n *UserNode) Append(user *User) *UserNode {
 
 //Remove 删除本节点
 func (n *UserNode) Remove() {
-	n.prev = n.next
+	n.prev.next = n.next
 }
 
 //Value 返回用户
 func (n *UserNode) Value() *User {
 	return n.user
+}
+
+//NewUserList 初始化
+func NewUserList() *UserList {
+	return &UserList{
+		head: &UserNode{},
+	}
 }
 
 //UserList 用户链表
@@ -105,36 +112,36 @@ type UserList struct {
 
 //Head 返回头节点
 func (l *UserList) Head() *UserNode {
-	l.RLock()
-	defer l.RUnlock()
-	return l.head
+	// l.RLock()
+	// defer l.RUnlock()
+	return l.head.next
 }
 
 //Tail 返回尾节点
 func (l *UserList) Tail() *UserNode {
-	l.RLock()
-	defer l.RUnlock()
+	// l.RLock()
+	// defer l.RUnlock()
 	return l.tail
 }
 
 //Add 添加节点
 func (l *UserList) Add(user *User) *UserNode {
 	l.Lock()
-	defer l.Unlock()
 	var node *UserNode
 	if l.len == 0 {
 		node = &UserNode{
 			user: user,
 			next: nil,
-			prev: nil,
+			prev: l.head,
 		}
-		l.head = node
+		l.head.next = node
 		l.tail = node
 	} else {
 		node = l.tail.Append(user)
 		l.tail = node
 	}
 	l.len++
+	l.Unlock()
 	return node
 }
 
