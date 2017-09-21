@@ -24,7 +24,7 @@ type IBuilding interface {
 //NewBuilding 初始化
 func NewBuilding() IBuilding {
 	return &Building{
-		rooms: make([]*common.Room, DefaultSize),
+		rooms: make([]*common.Room, 0, DefaultSize),
 	}
 }
 
@@ -49,7 +49,7 @@ func (b *Building) CheckOut(room *common.Room, user *common.User) error {
 	defer b.Unlock()
 	for i, r := range b.rooms {
 		if r.ID == room.ID {
-			if user.ID == room.User.ID {
+			if room.User == nil || user.ID == room.User.ID {
 				b.rooms = append(b.rooms[:i], b.rooms[i+1:]...)
 			} else {
 				return &common.Error{Code: "BUILD001", Msg: "权限不足"}

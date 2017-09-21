@@ -17,7 +17,7 @@ type ITransporter interface {
 	Send(*common.Message) error
 	Distribute(*common.Message, *common.UserNode) error
 	Listen() (<-chan *MessageEntity, chan<- *MessageEntity, error)
-	Receive() (*common.Message, error)
+	Receive() (*common.Message, net.Addr, error)
 }
 
 //MessageEntity message包
@@ -104,9 +104,9 @@ func (t *Transporter) Distribute(msg *common.Message, node *common.UserNode) err
 }
 
 //Receive 接收
-func (t *Transporter) Receive() (*common.Message, error) {
+func (t *Transporter) Receive() (*common.Message, net.Addr, error) {
 	entity := <-t.receiver
-	return entity.Message, entity.Err
+	return entity.Message, entity.Addr, entity.Err
 }
 
 //Listen 监听端口
@@ -129,6 +129,7 @@ func (t *Transporter) Listen() (<-chan *MessageEntity, chan<- *MessageEntity, er
 				msg, err := t.encoder.Decode(entity.Data)
 				t.receiver <- &MessageEntity{
 					Message: msg,
+					Addr:    entity.Addr,
 					Err:     err,
 				}
 			}

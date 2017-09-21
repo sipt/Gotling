@@ -17,7 +17,7 @@ func TestTransport(t *testing.T) {
 	testMsg := &common.Message{
 		UserID:    int64(1),
 		RoomID:    int64(2),
-		Type:      int8(3),      //消息类型
+		Type:      int16(3),     //消息类型
 		Data:      []byte(data), //消息内容
 		Timescanp: time.Now(),
 	}
@@ -37,7 +37,7 @@ func TestTransport(t *testing.T) {
 		var msg *common.Message
 		var err error
 		for {
-			msg, err = transporter.Receive()
+			msg, _, err = transporter.Receive()
 			if err != nil {
 				t.Errorf("receive msg error, err:%v", err)
 			}

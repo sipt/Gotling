@@ -12,7 +12,7 @@ func TestJSONEncoding(t *testing.T) {
 	msg := &common.Message{
 		UserID:    int64(1),
 		RoomID:    int64(2),
-		Type:      int8(3),         //消息类型
+		Type:      int16(3),        //消息类型
 		Data:      []byte("我的一句话"), //消息内容
 		Timescanp: now,
 	}

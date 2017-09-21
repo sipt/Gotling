@@ -134,6 +134,7 @@ func (l *UserList) Add(user *User) *UserNode {
 		node = l.tail.Append(user)
 		l.tail = node
 	}
+	l.len++
 	return node
 }
 
@@ -144,6 +145,7 @@ func (l *UserList) Remove(user *User) *UserNode {
 	for node := l.Head(); node != nil; node = node.next {
 		if node.Value().ID == user.ID {
 			node.Remove()
+			l.len--
 			return node
 		}
 	}
